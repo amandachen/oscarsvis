@@ -9,22 +9,18 @@
 
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script>
+
     var dataset = []
-    var photos = []
-    d3.csv("data.csv", function (data) {
+    var max = 347;
+    
+    d3.csv("/data/data.csv", function (error, data) {
         dataset = data;
         //console.log(dataset)
 
-        for (var i in dataset) {
-            photos.push(dataset[i]['Photo']);
-        }
-
-        for (j = 0; j < photos.length - 1; j++) {
-            var icon = photos[j];
+        for (j = 0; j < max - 1; j++) {
             //document.write("<img src='" + icon + "' width=\"20\" height=\"20\"/><span>" + dataset[j]['Name'] + "</span>");
-            document.write("<img src='" + icon + "' width=\"20\" height=\"20\"/><span>");
+            document.write("<img src='images/" + j + ".jpg" + "' width=\"15\" height=\"15\"/><span>");
         }
     });
-
 
 </script>
