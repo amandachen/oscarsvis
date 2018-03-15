@@ -1,0 +1,167 @@
+body {
+  /*font: 11px sans-serif;*/
+  font-family: 'Raleway Dots';
+  /*font-weight: 100;*/
+  background-color: black;
+  background-image: url("images/dvsup.png");
+  color: lightgoldenrodyellow;
+  padding-top: 30px;
+  padding-right: 30px;
+  padding-bottom: 50px;
+  padding-left: 50px;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  justify-content: center;
+}
+
+svg {
+  margin: 0 auto;
+}
+
+.content {
+    width: 800px;
+    padding: 20px;
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+.content img {
+    margin-right: 15px;
+    float: left;
+}
+
+#small {
+    padding-top: 5px;
+    font-size: 12px;
+}
+
+.image img {
+    -webkit-transition: all 1s ease;
+    /* Safari and Chrome */
+    -moz-transition: all 1s ease;
+    /* Firefox */
+    -o-transition: all 1s ease;
+    /* IE 9 */
+    -ms-transition: all 1s ease;
+    /* Opera */
+    transition: all 1s ease;
+}
+
+.image:hover img {
+    -webkit-transform: scale(2);
+    /* Safari and Chrome */
+    -moz-transform: scale(2);
+    /* Firefox */
+    -ms-transform: scale(2);
+    /* IE 9 */
+    -o-transform: scale();
+    /* Opera */
+    transform: scale(1.25);
+}
+
+.tick line{
+  visibility:hidden;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: white;
+  shape-rendering: crispEdges;
+}
+
+text {
+  fill: white;
+  font-size: 12px;
+}
+
+
+
+.dot {
+  /*stroke: #000;*/
+}
+
+.tooltip {
+  position: absolute;
+  padding-left: 10px;
+  padding-top: 10px;
+  width: 200px;
+  height: 200px;
+  pointer-events: none;
+  font: 12px sans-serif;
+  color: black;
+  background: rgba(255, 255, 255, .9);
+  border-radius: 25px;
+}
+
+.tooltip img {
+
+    display: block;
+    margin-right: 50px;
+    width: 60px;
+    /*height: 100%;
+    max-height: 100px;*/
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.x.axis {
+  transition: opacity 1.5s;
+}
+
+.dot:hover {
+  cursor: pointer;
+}
+
+.slider {
+  -webkit-appearance: none;  /* Override default CSS styles */
+  appearance: none;
+  width: 80%; /* Full-width */
+  height: 5px; /* Specified height */
+  border-radius: 5px;
+  background: dimgrey; /* Grey background */
+  outline: none; /* Remove outline */
+  opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+  -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+  transition: opacity .2s;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none; /* Override default look */
+    appearance: none;
+    width: 13px; /* Set a specific slider handle width */
+    height: 13px; /* Slider handle height */
+    border-radius: 13px;
+    background: lightgoldenrodyellow; /* Green background */
+    cursor: pointer; /* Cursor on hover */
+}
+
+.slider::-moz-range-thumb {
+    width: 13px; /* Set a specific slider handle width */
+    height: 13px; /* Slider handle height */
+    border-radius: 13px;
+    background: lightgoldenrodyellow; /* Green background */
+    cursor: pointer; /* Cursor on hover */
+}
+
+.slider:active, .slider:hover {
+  opacity: 1;
+}
+
+.filter {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+}
+.title {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  font-weight: bold;
+  transition: all .2s;
+  transition-timing-function:cubic-bezier();
+}
+.year {
+  font-weight: 500;
+}

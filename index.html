@@ -1,26 +1,364 @@
 <!DOCTYPE html>
+<html>
 <meta charset="utf-8">
 
-<style type="text/css">
-</style>
-
+<!-- Example based on http://bl.ocks.org/mbostock/3887118 -->
+<!-- Tooltip example from http://www.d3noob.org/2013/01/adding-tooltips-to-d3js-graph.html -->
+<!-- Coding style based on http://gist.github.com/mbostock/5977197 -->
+<link href="https://fonts.googleapis.com/css?family=Raleway+Dots" rel="stylesheet" lazyload>
+<link rel="stylesheet" type="text/css" href="style.css">
 <body>
-</body>
+  <div class="content">
 
-<script src="https://d3js.org/d3.v4.min.js"></script>
+      <div class="image"> <img src="images/oscar.png" width=8%></div>
+
+      <h3>oscar winner diversity (1927-2017)<h3>
+      <p>on the 90th anniversary of the oscars, we decided to investigate:
+          have the oscar winners gotten more diverse?
+          and what roles do they play?</p>
+      <p id="small">by Crystal Liu and Amanda Chen</p>
+  </div>
+  <div class = "filter">
+      <input type="range" min="0" max = "90" value="90" class="slider">
+  </div>
+  <div class = "title">
+    <p>Diversity of Oscar Winners as of: <span class = 'year'>2017</span></p>
+  </div>
+<script src="http://d3js.org/d3.v3.min.js"></script>
 <script>
+//svg
+var margin = {top: 20, right: 20, bottom: 30, left: 40},
+    width = 960 - margin.left - margin.right,
+    height = 550 - margin.top - margin.bottom;
 
-    var dataset = []
-    var max = 347;
-    
-    d3.csv("/data/data.csv", function (error, data) {
-        dataset = data;
-        //console.log(dataset)
+/*
+ * value accessor - returns the value to encode for a given data object.
+ * scale - maps value to a visual display encoding, such as a pixel position.
+ * map function - maps from data value to display value
+ * axis - sets up axis
+ */
 
-        for (j = 0; j < max - 1; j++) {
-            //document.write("<img src='" + icon + "' width=\"20\" height=\"20\"/><span>" + dataset[j]['Name'] + "</span>");
-            document.write("<img src='images/" + j + ".jpg" + "' width=\"15\" height=\"15\"/><span>");
+var imgSize = 10;
+var imgPadding = imgSize/4;
+// setup x
+// var xValue = function(d) { return races.indexOf(d.Race);}, // data -> value
+//     // xScale = d3.scale.ordinal().domain(data.map(function(d) { return d.Race; })).rangeRoundBands([0, width], .2), // value -> display
+//     xMap = function(d) { return xScale(xValue(d));}, // data -> display
+//     xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+
+// setup y
+var yValue = function(d) { return d.Y;}, // data -> value
+    yScale = d3.scale.linear().range([height, 0]), // value -> display
+    yMap = function(d) { return yScale(yValue(d));}, // data -> display
+    yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+// setup fill color
+var cValue = function(d) {
+  return d.Race;
+}, color = d3.scale.ordinal().domain(['White', 'Black', 'Latinx', 'Asian', 'Mixed']).range(['#40607A','#288993','#30B096','#73D487','#CAF270']);
+
+// add the graph canvas to the body of the webpage
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+// add the tooltip area to the webpage
+var tooltip = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
+// load data
+d3.csv("/data/data.csv", function(error, data) {
+  //filter by year/ceremony number
+  var ceremonies = d3.set(data.map(function(d){return d['Ceremony'];})).values();
+  d3.select('.filter').on('input', filter);
+  function filter() {
+      var ceremony = d3.select('.filter')[0][0].firstElementChild.value;
+      svg.selectAll(".dot")
+          .filter(function(d){
+            return (d['Ceremony'] > ceremony);
+          })
+          .transition()
+          .duration(200)
+          .attr("width", 0)
+          .attr("height", 0)
+          .style("opacity", 0);
+      svg.selectAll(".dot")
+          .filter(function(d){
+            return (d['Ceremony'] <= ceremony);
+          })
+          .transition()
+          .duration(200)
+          .attr("width", imgSize)
+          .attr("height", imgSize)
+          .attr("rx",imgSize/2)
+          .attr("ry",imgSize/2)
+          .style("opacity", 1);
+     updateYear(ceremony);
+  }
+  var years = d3.set(data.map(function(d){return d['Year'];})).values();
+  var weirdYears = years.slice(-6);
+  years = weirdYears.concat(years.slice(0,84))
+  function updateYear(c) {
+    var year = years[c];
+    if (year != undefined) {
+        d3.select('.year').html(`${year}`);
+    }
+  }
+
+  var races = d3.set(data.map(function(d){return d['Race'];})).values();
+  //set up x
+  var xValue = function(d) { return d.X;}, // data -> value
+      xScale = d3.scale.linear().domain([0,5]).range([0, width]),
+      // xScale = d3.scale.ordinal().domain(races).rangePoints([0, width], .2),
+      // xScale = d3.scale.ordinal().domain(data.map(function(d) { return d.Race; })).rangeRoundBands([0, width], .2), // value -> display
+      xMap = function(d) { return xScale(xValue(d));}, // data -> display
+      xAxis = d3.svg.axis().scale(xScale).orient("bottom").outerTickSize(0)
+          .tickFormat(function(d) {
+              return (races[d-0.5]);
+          });
+
+  // x,y coordinates for points
+  var wmbin = 0.125, bmbin = 1.5, lmbin = 2.5, ambin = 3.5, mmbin = 4.5; //initial x values for males
+  var wfbin = 0.125, bfbin = 1.5, lfbin = 2.5, afbin = 3.5, mfbin = 4.5; //initial x values for females
+  var wm = -1, bm = -1, lm = -1, am = -1, mm = -1; //initial y values for males
+  var wf = 10, bf = 10, lf = 10, af = 10, mf = 10; //initial y values for females
+  var ymax = 275;
+  var nameIdDict = {}; //dictionary Name: [Ids]
+  data.forEach(function(d) {
+    if (!(d.Name in nameIdDict)) {
+        nameIdDict[d.Name] = [data.indexOf(d)];
+    }
+    else if (d.Name in nameIdDict){
+      var arr = nameIdDict[d.Name];
+      arr.push(data.indexOf(d));
+      nameIdDict[d.Name] = arr;
+    }
+    d['Age at Win'] = +d['Age at Win'];
+    if (d['Race'] == 'White') {
+      if (d['Gender'] == 'M' ) {
+        d['Y'] = wm;
+        wm-=imgSize + imgPadding;
+        d['X'] = wmbin;
+        if (wm < -ymax) {
+          wm = -1;
+          wmbin += 0.125
         }
-    });
+      }
+      else {
+        d['Y'] = wf;
+        wf+=imgSize + imgPadding;
+        d['X'] = wfbin;
+        if (wf > ymax) {
+          wf = 10;
+          wfbin += 0.125
+        }
+      }
+    }
+    if (d['Race'] == 'Black') {
+      if (d['Gender'] == 'M' ) {
+        d['Y'] = bm;
+        bm-=imgSize + imgPadding;
+        d['X'] = bmbin;
+        if (bm < -ymax) {
+          bm = -1;
+          bmbin += 0.125
+        }
+      }
+      else {
+        d['Y'] = bf;
+        bf+=imgSize + imgPadding;
+        d['X'] = bfbin;
+        if (bf > ymax) {
+          bf = 1;
+          bfbin += 0.125
+        }
+      }
+    }
+    if (d['Race'] == 'Latinx') {
+      if (d['Gender'] == 'M' ) {
+        d['Y'] = lm;
+        lm-=imgSize + imgPadding;
+        d['X'] = lmbin;
+        if (lm < -ymax) {
+          lm = -1;
+          lmbin += 0.125
+        }
+      }
+      else {
+        d['Y'] = lf;
+        lf+=imgSize + imgPadding;
+        d['X'] = lfbin;
+        if (lf > ymax) {
+          lf = 1;
+          lfbin += 0.125
+        }
+      }
+    }
+    if (d['Race'] == 'Asian') {
+      if (d['Gender'] == 'M' ) {
+        d['Y'] = am;
+        am-=imgSize + imgPadding;
+        d['X'] = ambin;
+        if (am < -ymax) {
+          am = -1;
+          ambin += 0.125
+        }
+      }
+      else {
+        d['Y'] = af;
+        af+=imgSize + imgPadding;
+        d['X'] = afbin;
+        if (af > ymax) {
+          af = 1;
+          afbin += 0.125
+        }
+      }
+    }
+    if (d['Race'] == 'Mixed') {
+      if (d['Gender'] == 'M' ) {
+        d['Y'] = mm;
+        mm-=imgSize + imgPadding;
+        d['X'] = mmbin;
+        if (mm < -ymax) {
+          mm = -1;
+          mmbin += 0.125
+        }
+      }
+      else {
+        d['Y'] = mf;
+        mf+=imgSize + imgPadding;
+        d['X'] = mfbin;
+        if (mf > ymax) {
+          mf = 1;
+          mfbin += 0.125
+        }
+      }
+    }
+  });
+
+  // don't want dots overlapping axis, so add in buffer to data domain
+  // xScale.domain([d3.min(data, xValue)-1, d3.max(data, xValue)+1]);
+  // d3.min(data, yValue)-imgSize
+  yScale.domain([-d3.max(data, yValue)+1, d3.max(data, yValue)+1]);
+
+  // x-axis
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + (height/2) + ")")
+      .call(xAxis)
+      .append("text")
+      .attr("class", "label")
+      .attr("x", width)
+      .attr("y", -6)
+      .style("text-anchor", "end")
+      .text("♀ Females")
+svg.select('.x.axis')
+      .append("text")
+      .attr("class", "label")
+      .attr("x", width)
+      .attr("y", 15)
+      .style("text-anchor", "end")
+      .text("♂ Males");
+
+
+  // y-axis
+  // svg.append("g")
+  //     .attr("class", "y axis")
+  //     .call(yAxis)
+  //     .append("text")
+  //     .attr("class", "label")
+  //     .attr("transform", "rotate(-90)")
+  //     .attr("y", 6)
+  //     .attr("dy", ".71em")
+  //     .style("text-anchor", "end");
+
+  // draw dots
+  svg.selectAll(".dot")
+      .data(data)
+      .enter().append("rect")
+      .attr("class", "dot")
+      .attr("x", xMap)
+      .attr("y", yMap)
+      .attr("width", 0)
+      .attr("height", 0)
+      .attr("rx",imgSize)
+      .attr("ry",imgSize)
+      .style("fill", function(d) { return color(cValue(d));})
+      // .enter().append("svg:image")
+      // .attr("class", "dot")
+      // .attr("x", function(d) {return xScale(d.Race)})
+      // .attr("y", yMap)
+      // .attr("width", imgSize)
+      // .attr("height", imgSize)
+      // .attr("xlink:href", function(d) {return d.Photo;})
+      .attr("id", function(d) {return data.indexOf(d);})
+      .on("mouseover", function(d) {
+          //highlight other wins by same person
+          nameIdDict[d.Name].forEach(function(i) {
+            svg.select(`[id='${i}']`).style("fill", "gold");
+          });
+          tooltip.transition()
+               .duration(200)
+               .style("opacity", 1);
+          tooltip.html('<img src=' + d['Photo'] + '>' +
+                            '<b>' + d['Name'] + '</b><br>' +
+                            '<b>Race: </b>' + d['Race'] + '<br>' +
+                            '<b>Age at Win: </b>' + d['Age at Win'] + '<br>' +
+                            '<b>Award: </b>' + d['Award'] + '<br>' +
+                            '<b>Film: </b>' +  d['Film'])
+               .style("left", (d3.event.pageX + 5) + "px")
+               .style("top", (d3.event.pageY - 28) + "px");
+          svg.select('.x.axis').style("opacity", 0.3);
+        //  tooltip.append("img")
+        //         .attr("src", d['Photo'])
+        //         .attr("x", -10)
+        //         .attr("y", -10)
+      })
+      .on("mouseout", function(d) {
+          nameIdDict[d.Name].forEach(function(i) {
+            svg.select(`[id='${i}']`).style("fill", function(d) { return color(cValue(d));});
+          });
+          tooltip.transition()
+               .duration(500)
+               .style("opacity", 0);
+          svg.select('.x.axis').style("opacity", 1);
+      })
+      .transition()
+          .duration(1500)
+          .attr("width", imgSize)
+          .attr("height", imgSize)
+          .attr("rx",imgSize/2)
+          .attr("ry",imgSize/2)
+          .delay(function(d){return Math.random()*800;})
+          .ease("bounce-in");
+
+  // draw legend
+  var legend = svg.selectAll(".legend")
+      .data(color.domain())
+    .enter().append("g")
+      .attr("class", "legend")
+      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+  // draw legend colored rectangles
+  legend.append("rect")
+      .attr("x", width - 18)
+      .attr("width", 18)
+      .attr("height", 18)
+      .style("fill", color);
+
+  // draw legend text
+  legend.append("text")
+      .attr("x", width - 24)
+      .attr("y", 9)
+      .attr("dy", ".35em")
+      .style("text-anchor", "end")
+      .text(function(d) { return d;});
+
+});
 
 </script>
+</body>
+</html>

@@ -31,7 +31,7 @@ Year,Ceremony,Film,Award,Gender,Winner,Name,Race,Age at Win,Photo
 1939,12,"Goodbye, Mr. Chips",Actor,M,1,Robert Donat,White,34,https://image.tmdb.org/t/p/w1280//rT2t0onUsZiGn40HlJxkmPb7Wdb.jpg
 1939,12,Stagecoach,Actor in a Supporting Role,M,1,Thomas Mitchell,White,47,https://image.tmdb.org/t/p/w1280//1Tiiouk77NtxSmdknoN4ny5kT9j.jpg
 1939,12,Gone with the Wind,Actress,F,1,Vivien Leigh,White,26,https://image.tmdb.org/t/p/w1280//wUy2GIFZjSpE01xUMy9wBy2xqjc.jpg
-1939,12,Gone with the Wind,Actress in a Supporting Role,,1,Hattie McDaniel,Black,44,https://image.tmdb.org/t/p/w1280//y3QtJ1qZD7Ms0IAzRbgOunMp97h.jpg
+1939,12,Gone with the Wind,Actress in a Supporting Role,F,1,Hattie McDaniel,Black,44,https://image.tmdb.org/t/p/w1280//y3QtJ1qZD7Ms0IAzRbgOunMp97h.jpg
 1940,13,The Philadelphia Story,Actor,M,1,James Stewart,White,32,https://image.tmdb.org/t/p/w1280//aBLtt0Sl4AZVNclzFrXzbndRzux.jpg
 1940,13,The Westerner,Actor in a Supporting Role,M,1,Walter Brennan,White,46,https://image.tmdb.org/t/p/w1280//wPp0mmWWVMzOD3ipne6MrgDr0Tm.jpg
 1940,13,Kitty Foyle,Actress,F,1,Ginger Rogers,White,29,https://image.tmdb.org/t/p/w1280//4rso9nDxOj5SaLYPJudCvSCMEOD.jpg
@@ -324,7 +324,7 @@ Year,Ceremony,Film,Award,Gender,Winner,Name,Race,Age at Win,Photo
 2012,85,Lincoln,Actor in a Leading Role,M,1,Daniel Day-Lewis,White,55,https://image.tmdb.org/t/p/w1280//hknfCSSU6AMeKV9yn9NTtTzIEGc.jpg
 2012,85,Django Unchained,Actor in a Supporting Role,M,1,Christoph Waltz,White,56,https://image.tmdb.org/t/p/w1280//2Hhztd4mUEV9Y25rfkXDwzL9QI9.jpg
 2012,85,Silver Linings Playbook,Actress in a Leading Role,F,1,Jennifer Lawrence,White,22,https://image.tmdb.org/t/p/w1280//hLzgl1dS8O2IAn1PIwHYhxR0Lkm.jpg
-2012,85,Les MisÌ©rables,Actress in a Supporting Role,F,1,Anne Hathaway,White,30,https://image.tmdb.org/t/p/w1280//xENM3XJAtdpolwELYDy9iaCtU4m.jpg
+2012,85,Les Misérables,Actress in a Supporting Role,F,1,Anne Hathaway,White,30,https://image.tmdb.org/t/p/w1280//xENM3XJAtdpolwELYDy9iaCtU4m.jpg
 2013,86,Dallas Buyers Club,Actor in a Leading Role,M,1,Matthew McConaughey,White,44,https://image.tmdb.org/t/p/w1280//jdRmHrG0TWXGhs4tO6TJNSoL25T.jpg
 2013,86,Dallas Buyers Club,Actor in a Supporting Role,M,1,Jared Leto,White,42,https://image.tmdb.org/t/p/w1280//msugySeTCyCmlRWtyB6sMixTQYY.jpg
 2013,86,Blue Jasmine,Actress in a Leading Role,F,1,Cate Blanchett,White,44,https://image.tmdb.org/t/p/w1280//5HikVWKfkkUa8aLdCMHtREBECIn.jpg
