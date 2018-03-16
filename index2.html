@@ -1,0 +1,121 @@
+<script>
+var width2 = width = 960 - margin.left - margin.right,
+            height2 = 20,
+            goal = 600,
+            operc_so_far = 0;
+
+function drawBar(ceremony) {
+    var censusYr;
+    if (ceremony >= 73) censusYr = 83;
+    else if (ceremony >= 63) censusYr = 73;
+    else if (ceremony >= 53) censusYr = 63;
+    else if (ceremony >= 43) censusYr = 53;
+    else if (ceremony >= 33) censusYr = 43;
+    else if (ceremony >= 23) censusYr = 33;
+    else if (ceremony >= 13) censusYr = 23;
+    else if (ceremony >= 3) censusYr = 13;
+    else if (ceremony >= 1) censusYr = 3;
+    else censusYr = 1;
+    if (currentCensus == censusYr) return;
+    currentCensus = censusYr;
+    chart.selectAll('g').remove();
+    var ototal_time = d3.sum(diversity[censusYr]);
+    var operc_so_far = 0;
+
+    var obar = chart.selectAll("g")
+        .data(diversity[censusYr]);
+   obar.enter().append("rect")
+        .attr("class", "bar")
+        .attr("width", 0)
+        .transition()
+        .duration(1000)
+        .delay(function(d,i){ return i*250})//a different delay for each bar
+        .attr("width", function (d) {
+                return ((d / ototal_time) * 100) + "%";
+        })
+            .attr("x", function (d) {
+                var prev_perc = operc_so_far;
+                var this_perc = 100 * (d / ototal_time);
+                operc_so_far = operc_so_far + this_perc;
+                return prev_perc + "%";
+            })
+            .attr("height", height2)
+            .attr("fill", function (d) {
+                var race = races[diversity[censusYr].indexOf(d)];
+                return (color2(race));
+            });
+    operc_so_far = 0;
+    obar.enter().append("text")
+        .attr("x", function (d) {
+            var prev_perc = operc_so_far;
+            var this_perc = 100 * (d / ototal_time);
+            operc_so_far = operc_so_far + this_perc;
+            return prev_perc + "%";
+        })
+        //.attr("y", 11)
+        .attr("dy", "1.35em")
+        .text(function (d) {
+            return Math.floor(d);
+        });
+
+}
+        var ototal_time = d3.sum(diversity[83]);
+        var bar_x = 0;
+        var chart = d3.select("#oscarsChart")
+            .attr("width", width2)
+            .attr("height", height2);
+
+        //var chart_width = chart.style("width").replace("px", "");
+        var chart_width = parseInt(d3.select("#oscarsChart").style("width"));
+
+        var color2 = d3.scale.ordinal()
+            .domain(['White', 'Black', 'Latinx', 'Asian', 'Mixed'])
+            .range(['#FF8264', '#FF467E', '#FD94B4', '#20B2AA', '#8BBF8C']);
+
+        var obar = chart.selectAll("g")
+            .data(diversity[83])
+            .enter().append("g");
+
+        obar.append("rect")
+        .attr("class", "bar")
+        .attr("width", 0)
+        .transition()
+        .duration(1500)
+        .delay(function(d,i){ return i*250})//a different delay for each bar
+        .attr("width", function (d) {
+                return ((d / ototal_time) * 100) + "%";
+        })
+            .attr("x", function (d) {
+                var prev_perc = operc_so_far;
+                var this_perc = 100 * (d / ototal_time);
+                operc_so_far = operc_so_far + this_perc;
+                return prev_perc + "%";
+            })
+            .attr("height", height2)
+            .attr("fill", function (d) {
+                return (color2(d));
+            });
+
+        operc_so_far = 0;
+        obar.append("text")
+            .attr("x", function (d) {
+                var prev_perc = operc_so_far;
+                var this_perc = 100 * (d / ototal_time);
+                operc_so_far = operc_so_far + this_perc;
+                return prev_perc + "%";
+            })
+            .attr("dy", "1.35em")
+            .text(function (d) {
+                return Math.floor(d);
+            });
+
+     var ochart2 = d3.select("#chart-title2")
+            .attr("width", width2)
+            .attr("height", height2*2);
+
+      ochart2.append("text")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("dy", "1.5em")
+            .text("US Population (%)");
+</script>

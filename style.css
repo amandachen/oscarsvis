@@ -76,9 +76,6 @@ text {
   font-size: 12px;
 }
 
-.dot {
-  /*stroke: #000;*/
-}
 
 .tooltip {
   position: absolute;
@@ -169,4 +166,21 @@ text {
 }
 .year {
   font-weight: 500;
+}
+
+#chart text{
+  fill: black;
+  stroke: black;
+  font-size: 12px;
+}
+#chart-title text {
+  font-size: 15px;
+}
+#chart-title2 text {
+  font-size: 15px;
+}
+#oscarsChart text{
+  fill: black;
+  stroke: black;
+  font-size: 12px;
 }
