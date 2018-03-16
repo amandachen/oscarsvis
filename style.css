@@ -174,9 +174,11 @@ text {
   font-size: 12px;
 }
 #chart-title text {
+  fill: lightgoldenrodyellow;
   font-size: 15px;
 }
 #chart-title2 text {
+  fill: lightgoldenrodyellow;
   font-size: 15px;
 }
 #oscarsChart text{

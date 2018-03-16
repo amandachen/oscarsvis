@@ -108,6 +108,8 @@ d3.csv("data.csv", function(error, data) {
     var year = years[c-1];
     if (year != undefined) {
         d3.select('.year').html(`${year}`);
+        d3.select("#chart-title text")[0][0].innerHTML = `US Population (%) in ${year}`;
+        d3.select("#chart-title2 text")[0][0].innerHTML = `Oscars Diversity (%) in ${year}`;
     }
   }
 
@@ -444,7 +446,8 @@ function drawBar(ceremony) {
             })
             .attr("height", height2)
             .attr("fill", function (d) {
-                return (color2(d));
+              var race = races[census[83].indexOf(d)];
+              return (color2(race));
             });
 
         perc_so_far = 0;
@@ -468,7 +471,7 @@ function drawBar(ceremony) {
             .attr("x", 0)
             .attr("y", 0)
             .attr("dy", "1.5em")
-            .text("US Population (%)");
+            .text("US Population (%) in 2017");
 
 var ocurrentCensus= 83;
 //oscars chart
@@ -501,11 +504,12 @@ function drawOscarsBar(ceremony) {
                             else censusYr = 1;
                             if (ocurrentCensus == censusYr) return;
                             ocurrentCensus = censusYr;
-                            chart.selectAll('g').remove();
+                            ochart.selectAll('g').remove();
+                            ochart.selectAll('text').remove();
                             var ototal_time = d3.sum(diversity[censusYr]);
                             var operc_so_far = 0;
 
-                            var obar = chart.selectAll("g")
+                            var obar = ochart.selectAll("g")
                                 .data(diversity[censusYr]);
                            obar.enter().append("rect")
                                 .attr("class", "bar")
@@ -544,7 +548,7 @@ function drawOscarsBar(ceremony) {
                         }
                                 var ototal_time = d3.sum(diversity[83]);
                                 var bar_x = 0;
-                                var chart = d3.select("#oscarsChart")
+                                var ochart = d3.select("#oscarsChart")
                                     .attr("width", width2)
                                     .attr("height", height2);
 
@@ -555,7 +559,7 @@ function drawOscarsBar(ceremony) {
                                     .domain(['White', 'Black', 'Latinx', 'Asian', 'Mixed'])
                                     .range(['#FF8264', '#FF467E', '#FD94B4', '#20B2AA', '#8BBF8C']);
 
-                                var obar = chart.selectAll("g")
+                                var obar = ochart.selectAll("g")
                                     .data(diversity[83])
                                     .enter().append("g");
 
@@ -576,7 +580,8 @@ function drawOscarsBar(ceremony) {
                                     })
                                     .attr("height", height2)
                                     .attr("fill", function (d) {
-                                        return (color2(d));
+                                      var race = races[diversity[83].indexOf(d)];
+                                      return (color2(race));
                                     });
 
                                 operc_so_far = 0;
@@ -600,7 +605,10 @@ function drawOscarsBar(ceremony) {
                                     .attr("x", 0)
                                     .attr("y", 0)
                                     .attr("dy", "1.5em")
-                                    .text("Oscars Population (%)");
+                                    .text("Oscars Diversity (%) in 2017");
+
+var censusYears = {1:'1920', 3:'1930', 13:'1940', 23:'1950', 33:'1960', 43:'1970', 53:'1980', 63:'1990', 73:'2000',83:'2010'};
+
 });
 
 </script>
