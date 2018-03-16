@@ -9,9 +9,7 @@
 <link rel="stylesheet" type="text/css" href="style.css">
 <body>
   <div class="content">
-
       <div class="image"> <img src="images/oscar.png" width=8%></div>
-
       <h3>oscar winner diversity (1927-2017)<h3>
       <p>on the 90th anniversary of the oscars, we decided to investigate:
           have the oscar winners gotten more diverse?
@@ -19,7 +17,11 @@
       <p id="small">by Crystal Liu and Amanda Chen</p>
   </div>
   <div class = "filter">
-      <input type="range" min="0" max = "90" value="90" class="slider">
+      <input type="range" min="1" max = "90" value="90" class="slider">
+  </div>
+  <div class="filterLabels">
+      <span>1927/1928</span>
+      <span>2017</span>
   </div>
   <div class = "title">
     <p>Diversity of Oscar Winners as of: <span class = 'year'>2017</span></p>
@@ -29,7 +31,7 @@
 //svg
 var margin = {top: 20, right: 20, bottom: 30, left: 40},
     width = 960 - margin.left - margin.right,
-    height = 550 - margin.top - margin.bottom;
+    height = 580 - margin.top - margin.bottom;
 
 /*
  * value accessor - returns the value to encode for a given data object.
@@ -39,7 +41,7 @@ var margin = {top: 20, right: 20, bottom: 30, left: 40},
  */
 
 var imgSize = 10;
-var imgPadding = imgSize/4;
+var imgPadding = imgSize*2;
 // setup x
 // var xValue = function(d) { return races.indexOf(d.Race);}, // data -> value
 //     // xScale = d3.scale.ordinal().domain(data.map(function(d) { return d.Race; })).rangeRoundBands([0, width], .2), // value -> display
@@ -54,8 +56,10 @@ var yValue = function(d) { return d.Y;}, // data -> value
 
 // setup fill color
 var cValue = function(d) {
-  return d.Race;
-}, color = d3.scale.ordinal().domain(['White', 'Black', 'Latinx', 'Asian', 'Mixed']).range(['#40607A','#288993','#30B096','#73D487','#CAF270']);
+  return d.Race+d.Gender;
+}, color = d3.scale.ordinal()
+              .domain(['WhiteF', 'BlackF', 'LatinxF', 'AsianF', 'MixedF', 'WhiteM', 'BlackM', 'LatinxM', 'AsianM', 'MixedM'])
+              .range(['#FF8264','#FF467E','#FD94B4','#20B2AA','#8BBF8C','#E79366','#DD6262','#F0AFA7','#7FFFD4','#8BBF8C']);
 
 // add the graph canvas to the body of the webpage
 var svg = d3.select("body").append("svg")
@@ -76,25 +80,20 @@ d3.csv("/data/data.csv", function(error, data) {
   d3.select('.filter').on('input', filter);
   function filter() {
       var ceremony = d3.select('.filter')[0][0].firstElementChild.value;
+      ceremony = parseInt(ceremony);
       svg.selectAll(".dot")
           .filter(function(d){
             return (d['Ceremony'] > ceremony);
           })
           .transition()
-          .duration(200)
-          .attr("width", 0)
-          .attr("height", 0)
-          .style("opacity", 0);
+          .duration(500)
+          .style("opacity", .1);
       svg.selectAll(".dot")
           .filter(function(d){
             return (d['Ceremony'] <= ceremony);
           })
           .transition()
-          .duration(200)
-          .attr("width", imgSize)
-          .attr("height", imgSize)
-          .attr("rx",imgSize/2)
-          .attr("ry",imgSize/2)
+          .duration(500)
           .style("opacity", 1);
      updateYear(ceremony);
   }
@@ -102,7 +101,7 @@ d3.csv("/data/data.csv", function(error, data) {
   var weirdYears = years.slice(-6);
   years = weirdYears.concat(years.slice(0,84))
   function updateYear(c) {
-    var year = years[c];
+    var year = years[c-1];
     if (year != undefined) {
         d3.select('.year').html(`${year}`);
     }
@@ -123,9 +122,11 @@ d3.csv("/data/data.csv", function(error, data) {
   // x,y coordinates for points
   var wmbin = 0.125, bmbin = 1.5, lmbin = 2.5, ambin = 3.5, mmbin = 4.5; //initial x values for males
   var wfbin = 0.125, bfbin = 1.5, lfbin = 2.5, afbin = 3.5, mfbin = 4.5; //initial x values for females
-  var wm = -1, bm = -1, lm = -1, am = -1, mm = -1; //initial y values for males
-  var wf = 10, bf = 10, lf = 10, af = 10, mf = 10; //initial y values for females
-  var ymax = 275;
+  var wm = -15, bm = -15, lm = -15, am = -15, mm = -15; //initial y values for males
+  var wf = 50, bf = 50, lf = 50, af = 50, mf = 50; //initial y values for females
+  var ymax = 350;
+  var spacing = 0.125;
+  var xmax = .75;
   var nameIdDict = {}; //dictionary Name: [Ids]
   data.forEach(function(d) {
     if (!(d.Name in nameIdDict)) {
@@ -136,24 +137,24 @@ d3.csv("/data/data.csv", function(error, data) {
       arr.push(data.indexOf(d));
       nameIdDict[d.Name] = arr;
     }
-    d['Age at Win'] = +d['Age at Win'];
+    d['Ceremony'] = +d['Ceremony'];
     if (d['Race'] == 'White') {
       if (d['Gender'] == 'M' ) {
         d['Y'] = wm;
-        wm-=imgSize + imgPadding;
         d['X'] = wmbin;
-        if (wm < -ymax) {
-          wm = -1;
-          wmbin += 0.125
+        wmbin += spacing;
+        if (wmbin > xmax + spacing) {
+          wm-=imgSize + imgPadding;
+          wmbin = 0.125;
         }
       }
       else {
         d['Y'] = wf;
-        wf+=imgSize + imgPadding;
         d['X'] = wfbin;
-        if (wf > ymax) {
-          wf = 10;
-          wfbin += 0.125
+        wfbin += spacing;
+        if (wfbin > xmax + spacing) {
+          wf+=imgSize + imgPadding;
+          wfbin = 0.125;
         }
       }
     }
@@ -289,16 +290,16 @@ svg.select('.x.axis')
       .style("fill", function(d) { return color(cValue(d));})
       // .enter().append("svg:image")
       // .attr("class", "dot")
-      // .attr("x", function(d) {return xScale(d.Race)})
+      // .attr("x", xMap)
       // .attr("y", yMap)
       // .attr("width", imgSize)
       // .attr("height", imgSize)
-      // .attr("xlink:href", function(d) {return d.Photo;})
+      // .attr("xlink:href", function(d) {return `/images/${data.indexOf(d)}.jpg`})
       .attr("id", function(d) {return data.indexOf(d);})
       .on("mouseover", function(d) {
           //highlight other wins by same person
           nameIdDict[d.Name].forEach(function(i) {
-            svg.select(`[id='${i}']`).style("fill", "gold");
+            svg.select(`[id='${i}']`).style("fill", "white");
           });
           tooltip.transition()
                .duration(200)
@@ -309,9 +310,8 @@ svg.select('.x.axis')
                             '<b>Age at Win: </b>' + d['Age at Win'] + '<br>' +
                             '<b>Award: </b>' + d['Award'] + '<br>' +
                             '<b>Film: </b>' +  d['Film'])
-               .style("left", (d3.event.pageX + 5) + "px")
+               .style("left", (d3.event.pageX + 20) + "px")
                .style("top", (d3.event.pageY - 28) + "px");
-          svg.select('.x.axis').style("opacity", 0.3);
         //  tooltip.append("img")
         //         .attr("src", d['Photo'])
         //         .attr("x", -10)
@@ -330,23 +330,25 @@ svg.select('.x.axis')
           .duration(1500)
           .attr("width", imgSize)
           .attr("height", imgSize)
-          .attr("rx",imgSize/2)
-          .attr("ry",imgSize/2)
+          .attr("rx",imgSize)
+          .attr("ry",imgSize)
           .delay(function(d){return Math.random()*800;})
           .ease("bounce-in");
 
   // draw legend
   var legend = svg.selectAll(".legend")
-      .data(color.domain())
-    .enter().append("g")
+      .data(color.domain().slice(0,5))
+      .enter().append("g")
       .attr("class", "legend")
       .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
   // draw legend colored rectangles
   legend.append("rect")
       .attr("x", width - 18)
-      .attr("width", 18)
-      .attr("height", 18)
+      .attr("width", 15)
+      .attr("height", 15)
+      .attr("rx",imgSize)
+      .attr("ry",imgSize)
       .style("fill", color);
 
   // draw legend text
@@ -355,7 +357,7 @@ svg.select('.x.axis')
       .attr("y", 9)
       .attr("dy", ".35em")
       .style("text-anchor", "end")
-      .text(function(d) { return d;});
+      .text(function(d) { return d.substring(0,d.length-1);});
 
 });
 

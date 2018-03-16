@@ -76,8 +76,6 @@ text {
   font-size: 12px;
 }
 
-
-
 .dot {
   /*stroke: #000;*/
 }
@@ -96,7 +94,6 @@ text {
 }
 
 .tooltip img {
-
     display: block;
     margin-right: 50px;
     width: 60px;
@@ -112,6 +109,13 @@ text {
 
 .dot:hover {
   cursor: pointer;
+}
+
+.filterLabels {
+  width: 80%;
+  display: flex;
+  justify-content: space-between;
+  margin: 0 auto;
 }
 
 .slider {
@@ -154,6 +158,7 @@ text {
   align-content: center;
   justify-content: center;
 }
+
 .title {
   display: flex;
   align-content: center;
