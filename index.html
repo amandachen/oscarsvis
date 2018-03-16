@@ -74,7 +74,7 @@ var tooltip = d3.select("body").append("div")
     .style("opacity", 0);
 
 // load data
-d3.csv("../data/data.csv", function(error, data) {
+d3.csv("data.csv", function(error, data) {
   //filter by year/ceremony number
   var ceremonies = d3.set(data.map(function(d){return d['Ceremony'];})).values();
   d3.select('.filter').on('input', filter);
